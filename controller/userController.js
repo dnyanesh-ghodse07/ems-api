@@ -1,15 +1,32 @@
-const getAllUsers = (req, res) => {
-    console.log(req.reqTime)
+
+exports.checkID = (req, res, next, val) => {
+  console.log(`User id is ${val}`);
+  next();
+};
+
+exports.checkBody = (req, res, next) => {
+  console.log(req.body);
+  if(!req.body.email || !req.body.password){
+    return res.status(400).json({
+      message: "Failed"
+    });
+  } 
+  console.log("first")
+  next();
+};
+
+exports.getAllUsers = (req, res) => {
+  console.log(req.reqTime);
   res.status(200).json({
     status: "success",
-    requestedAt:req.reqTime,
+    requestedAt: req.reqTime,
     data: {
       users: [{ name: "USERS" }],
     },
   });
 };
 
-const getUser = (req, res) => {
+exports.getUser = (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
@@ -18,7 +35,7 @@ const getUser = (req, res) => {
   });
 };
 
-const deleteUser = (req, res) => {
+exports.deleteUser = (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
@@ -27,16 +44,16 @@ const deleteUser = (req, res) => {
   });
 };
 
-const createUser = (req, res) => {
+exports.createUser = (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
-      users: [{ name: "CREATE" }],
+      users: [{ name: "CREATED USER" }],
     },
   });
 };
 
-const updateUser = (req, res) => {
+exports.updateUser = (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
@@ -44,11 +61,3 @@ const updateUser = (req, res) => {
     },
   });
 };
-
-module.exports = {
-    updateUser,
-    createUser,
-    deleteUser,
-    getAllUsers,
-    getUser
-}

@@ -1,5 +1,6 @@
 const app = require("./app")
 
+console.log(process.env);
 
 const port = process.env.PORT || 4000;
 
