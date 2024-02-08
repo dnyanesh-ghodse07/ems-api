@@ -1,3 +1,5 @@
+const User = require("../models/userModels");
+const { handleErrorResponse } = require("../utils/handleErrorResponse");
 
 exports.checkID = (req, res, next, val) => {
   console.log(`User id is ${val}`);
@@ -5,34 +7,53 @@ exports.checkID = (req, res, next, val) => {
 };
 
 exports.checkBody = (req, res, next) => {
-  console.log(req.body);
   if(!req.body.email || !req.body.password){
     return res.status(400).json({
       message: "Failed"
     });
   } 
-  console.log("first")
   next();
 };
 
-exports.getAllUsers = (req, res) => {
-  console.log(req.reqTime);
-  res.status(200).json({
-    status: "success",
-    requestedAt: req.reqTime,
-    data: {
-      users: [{ name: "USERS" }],
-    },
-  });
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+
+    res.status(200).json({
+      status: "success",
+      requestedAt: req.reqTime,
+      data: {
+        users,
+      },
+    });
+  } catch (error) {
+   res.status(401).json({
+    status: "error",
+    error: error.message
+   })
+  }
+  
 };
 
-exports.getUser = (req, res) => {
-  res.status(200).json({
-    status: "success",
-    data: {
-      users: [{ name: "USER" }],
-    },
-  });
+exports.getUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+    
+    if(!user) {
+      throw new Error("User not found !")
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        user
+      },
+    });
+  } catch (error) {
+    handleErrorResponse(res,error)
+  }
+  
 };
 
 exports.deleteUser = (req, res) => {
@@ -44,14 +65,6 @@ exports.deleteUser = (req, res) => {
   });
 };
 
-exports.createUser = (req, res) => {
-  res.status(200).json({
-    status: "success",
-    data: {
-      users: [{ name: "CREATED USER" }],
-    },
-  });
-};
 
 exports.updateUser = (req, res) => {
   res.status(200).json({

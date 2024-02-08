@@ -1,19 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controller/userController");
+const authController = require("../controller/authController");
+
 
 //get params val
 router.param("id", userController.checkID);
 
+router.post("/signup", authController.signup);
+router.post("/login", authController.login);
+
 router
   .route("/")
-  .get(userController.getAllUsers)
-  .post(userController.checkBody, userController.createUser);
+  .get(authController.protect, userController.getAllUsers)
 
 router
   .route("/:id")
   .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+  .patch(authController.protect,userController.updateUser)
+  .delete(authController.protect,userController.deleteUser);
 
 module.exports = router;
