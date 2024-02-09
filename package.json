@@ -10,7 +10,8 @@
     "validator": "^13.11.0"
   },
   "scripts": {
-    "start": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "name": "ems-server",
   "version": "1.0.0",
