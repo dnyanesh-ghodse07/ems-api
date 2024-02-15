@@ -11,3 +11,5 @@ class AppError extends Error{
 }
 
 module.exports = AppError;
+
+const mes = new AppError("Server down", 400);

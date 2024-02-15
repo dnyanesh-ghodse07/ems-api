@@ -2,18 +2,19 @@ const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModels");
 
+function handleError (res, statusCode, errorMessage) {
+  return res.status(statusCode).json({
+    status: "fail",
+    error: errorMessage,
+  });
+};
+
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
-const handleError = (res, statusCode, errorMessage) => {
-  return res.status(statusCode).json({
-    status: "fail",
-    error: errorMessage,
-  });
-};
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
@@ -97,6 +98,7 @@ exports.protect = async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
     //check if user still exists
     const freshUser = await User.findById(decoded.id);
+    
     if (!freshUser) {
       throw new Error("User belong to this token is no longer exist");
     }

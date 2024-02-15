@@ -11,7 +11,7 @@ const cors = require("cors");
 const app = express();
 // Global Middleware - it should comes before the request
 // implement cors
-// Access control allow origin
+// Access control origin allow
 app.use(cors())
 
 // app.use(cors({
@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === "development") {
 }
 // limit request from same api
 const limiter = rateLimit({
-  limit: 100,
+  limit: 400,
   windowMs: 60 * 60 * 1000,
   message: "Too many request from this IP please try again in an hour!"
 })

@@ -5,12 +5,13 @@ const User = require("../models/userModels");
 //   next();
 // };
 
-const handleError = (res, statusCode, errorMessage) => {
+function handleError (res, statusCode, errorMessage) {
   return res.status(statusCode).json({
     status: "fail",
     error: errorMessage,
   });
 };
+
 
 exports.checkBody = (req, res, next) => {
   if (!req.body.email || !req.body.password) {
@@ -24,7 +25,7 @@ exports.checkBody = (req, res, next) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
-
+    console.log(users)
     res.status(200).json({
       status: "success",
       requestedAt: req.reqTime,
@@ -88,10 +89,12 @@ exports.updateUser = async (req, res) => {
     res.status(200).json({
       status: "success",
       data: {
-        message: "User successfully updated !"
+        message: "User successfully updated !",
+        user
       },
     });
   } catch (error) {
     handleError(res, 400, error.message);
   }
 };
+

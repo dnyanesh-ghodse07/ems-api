@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controller/userController");
 const authController = require("../controller/authController");
+const attendanceController = require("../controller/attendanceController");
 
 
 //get params val
@@ -9,6 +10,12 @@ const authController = require("../controller/authController");
 
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
+
+router.post("/attendance",attendanceController.createAttendance);
+router.get("/attendance", attendanceController.getAttendance);
+
+router.get("/attendance/:userId", attendanceController.getAttendanceById);
+router.put("/attendance/:userId", attendanceController.updateAttendance);
 
 router
   .route("/")
