@@ -1,20 +1,20 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModels");
+const { error } = require("console");
 
-function handleError (res, statusCode, errorMessage) {
+function handleError(res, statusCode, errorMessage) {
   return res.status(statusCode).json({
     status: "fail",
     error: errorMessage,
   });
-};
+}
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const signToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
-
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
@@ -43,10 +43,8 @@ const createSendToken = (user, statusCode, res) => {
 exports.signup = async (req, res, next) => {
   try {
     const newUser = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      passwordConfirm: req.body.passwordConfirm,
+      ...req.body,
+      role: undefined,
     });
 
     createSendToken(newUser, 201, res);
@@ -69,7 +67,7 @@ exports.login = async (req, res, next) => {
       throw new Error("Please provide valid email & password!");
     }
     //if everything ok send token to client
-    const token = signToken(user._id);
+    const token = signToken(user._id, user.role);
 
     res.status(200).json({
       status: "success",
@@ -98,7 +96,7 @@ exports.protect = async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
     //check if user still exists
     const freshUser = await User.findById(decoded.id);
-    
+
     if (!freshUser) {
       throw new Error("User belong to this token is no longer exist");
     }
@@ -111,12 +109,19 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-exports.restrictTo = (roles) => {
-  return (req, res, next) => {
+exports.restrictTo =  (roles) => {
+  return async (req, res, next) => {
     //roles ["admin","lead-guide"]
-    if (req.user.role !== roles[0]) {
-      new Error("You do not have permission")
+    const token = req.headers.authorization.split(" ")[1];
+    const user = jwt.decode(token)
+    if (!roles.includes(user.role)) {
+      return res.status(403).json({
+        status: "fail",
+        message: "You do not have permission to perform this action.",
+      });
     }
+
+    // If the user has the required role, proceed to the next middleware
     next();
   };
 };

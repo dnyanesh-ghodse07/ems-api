@@ -5,7 +5,13 @@ const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Enter your name"],
+    // required: [true, "Enter your name"],
+  },
+  firstName: {
+    type: String,
+  },
+  lastName: {
+    type: String,
   },
   employeeId: {
     type: String,
@@ -21,6 +27,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["admin", "user"],
     default: "user",
+  },
+  designation: {
+    type: String,
   },
   photo: String,
   password: {
@@ -39,6 +48,12 @@ const userSchema = new mongoose.Schema({
       },
       message: "Password are not the same !",
     },
+  },
+  reportingManager: {
+    type: String,
+  },
+  teamLead: {
+    type: String
   },
   passwordChangedAt: Date,
 });

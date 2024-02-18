@@ -8,7 +8,7 @@ const attendanceController = require("../controller/attendanceController");
 //get params val
 // router.param("id", userController.checkID);
 
-router.post("/signup", authController.signup);
+router.post("/signup", authController.restrictTo(["admin"]),authController.signup);
 router.post("/login", authController.login);
 
 router.post("/attendance",attendanceController.createAttendance);
@@ -24,7 +24,7 @@ router
 router
   .route("/:id")
   .get(userController.getUser)
-  .patch(authController.protect,userController.updateUser)
+  .patch(authController.protect,authController.restrictTo(["admin"]),userController.updateUser)
   .delete(authController.protect,authController.restrictTo(["admin"]),userController.deleteUser);
 
 module.exports = router;
