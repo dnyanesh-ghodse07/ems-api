@@ -40,6 +40,23 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
+exports.restrictTo =  (roles) => {
+  return async (req, res, next) => {
+    //roles ["admin","lead-guide"]
+    const token = req.headers.authorization.split(" ")[1];
+    const user = await jwt.decode(token);
+    if (!roles.includes(user.role)) {
+      return res.status(403).json({
+        status: "fail",
+        message: "You do not have permission to perform this action.",
+      });
+    }
+    // If the user has the required role, proceed to the next middleware
+    next();
+  };
+};
+
+
 exports.signup = async (req, res, next) => {
   try {
     const newUser = await User.create({
@@ -109,19 +126,3 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-exports.restrictTo =  (roles) => {
-  return async (req, res, next) => {
-    //roles ["admin","lead-guide"]
-    const token = req.headers.authorization.split(" ")[1];
-    const user = await jwt.decode(token);
-    if (!roles.includes(user.role)) {
-      return res.status(403).json({
-        status: "fail",
-        message: "You do not have permission to perform this action.",
-      });
-    }
-
-    // If the user has the required role, proceed to the next middleware
-    next();
-  };
-};

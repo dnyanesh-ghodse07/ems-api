@@ -8,7 +8,7 @@ const attendanceController = require("../controller/attendanceController");
 //get params val
 // router.param("id", userController.checkID);
 
-router.post("/signup", authController.restrictTo(["admin"]),authController.signup);
+router.post("/signup",authController.signup);
 router.post("/login", authController.login);
 
 router.post("/attendance",attendanceController.createAttendance);
