@@ -113,7 +113,7 @@ exports.restrictTo =  (roles) => {
   return async (req, res, next) => {
     //roles ["admin","lead-guide"]
     const token = req.headers.authorization.split(" ")[1];
-    const user = jwt.decode(token)
+    const user = await jwt.decode(token);
     if (!roles.includes(user.role)) {
       return res.status(403).json({
         status: "fail",
